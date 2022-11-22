@@ -1,13 +1,16 @@
 {
   "name": "cypress-soft-assertions",
   "version": "1.0.0",
-  "description": "",
+  "description": "A plugin that adds Cypress soft assertions",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx cypress open",
+    "badges": "npx -p dependency-version-badge update-badge cypress"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cypress-plugin"
+  ],
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^11.1.0",
