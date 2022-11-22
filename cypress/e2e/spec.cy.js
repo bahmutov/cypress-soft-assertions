@@ -12,17 +12,59 @@ function addBetterStyles() {
   style.setAttribute('id', styleId)
   style.setAttribute('type', 'text/css')
   style.innerHTML = `
-    .reporter .command.command-name-better .command-state-passed .command-message {
+    // warnings (failed soft assertions)
+    .reporter .command.command-name-warn .command-state-passed {
+      background-color: #37240f;
+    }
+    .reporter .command.command-name-warn .command-state-passed.command-wrapper {
+        border-left: 2px solid orange;
+    }
+    .reporter .command.command-name-warn .command-state-passed .command-message {
       color: orange;
     }
-    .reporter .command.command-name-better .command-state-passed .command-method {
+    .reporter .command.command-name-warn .command-state-passed .command-method {
       color: orange;
     }
-    .reporter .command.command-name-better .command-state-passed strong {
+    .reporter .command.command-name-warn .command-state-passed strong {
       color: darkOrange;
     }
-    .reporter .command.command-name-better .command-state-passed .command-number-column {
+    .reporter .command.command-name-warn .command-state-passed .command-number-column {
       color: orange;
+    }
+    .reporter .command-name-warn .command-state-passed .command-method span {
+      color: black;
+      background-color: darkOrange;
+      border-radius: 2px;
+      padding: 0 3px;
+      font-size: 12px;
+      display: inline-block;
+      line-height: 14px;
+    }
+
+    // passing assertions
+    .reporter .command.command-name-better .command-state-passed {
+      background-color: #69d3a7;
+    }
+    .reporter .command.command-name-better .command-state-passed .command-message {
+      color: #69d3a7;
+    }
+    .reporter .command.command-name-better .command-state-passed .command-method {
+      color: #69d3a7;
+    }
+    .reporter .command-name-better .command-state-passed .command-method span {
+      color: black;
+      background-color: #1fa971;
+      border-radius: 2px;
+      padding: 0 3px;
+      font-size: 12px;
+      display: inline-block;
+      line-height: 14px;
+    }
+    .reporter .command.command-name-better .command-state-passed strong {
+      color: #69d3a7;
+    }
+    .reporter .command.command-name-better .command-state-passed .command-number-column {
+      color: #69d3a7;
     }
   `
 }
@@ -124,10 +166,17 @@ Cypress.Commands.addAll(
 
       const applyChainer = function (memo, value) {
         logIndex++
+        let chainerLog
         cy.state('onBeforeLog', (log) => {
           // debugger
           log.attributes.name = 'better'
+          chainerLog = log
           return onBeforeLog(log, command, `${assertionIndex}-${logIndex}`)
+        })
+
+        cy.state('onAfterLog', (log) => {
+          console.log('onAfterLog')
+          // return onBeforeLog(log, command, `${assertionIndex}-${logIndex}`)
         })
 
         try {
@@ -149,7 +198,11 @@ Cypress.Commands.addAll(
                   return throwAndLogErr(err)
                 }
 
+                // log.attributes.name = 'warn'
                 // throw err
+                if (chainerLog) {
+                  chainerLog.attributes.name = 'warn'
+                }
               }
             } else {
               return cmd
@@ -220,8 +273,26 @@ Cypress.Commands.addAll(
   },
 )
 
-it.only('shows soft assertions', () => {
-  cy.wrap(42, { timeout: 0 }).better('equal', 10).then(cy.log)
+it('shows soft assertions', () => {
+  cy.wrap(42, { timeout: 100 })
+    .should('equal', 42) // passing assertion
+    .better('equal', 42) // passing
+    .better('equal', 10) // warning
+    .then(cy.log)
+})
+
+it('shows soft assertion for cy.contains', () => {
+  cy.document()
+    .invoke('open')
+    .invoke(
+      'write',
+      `
+        <body>
+          <p>Quick brown fox</p>
+        </body>
+      `,
+    )
+  cy.get('p').better('include.text', 'fox').better('have.value', 10)
 })
 
 it.skip('shows hard assertions', () => {
