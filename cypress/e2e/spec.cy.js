@@ -295,6 +295,24 @@ it('shows soft assertion for cy.contains', () => {
   cy.get('p').better('include.text', 'fox').better('have.value', 10)
 })
 
+it('retries the assertions', () => {
+  const person = {}
+  setTimeout(() => {
+    person.name = 'Joe'
+  }, 1000)
+  cy.wrap(person).should('have.property', 'name', 'Joe')
+})
+
+// immediately passes with a warning
+// desired behavior: retry until the "name: Joe" is set
+it.skip('retries the warnings', () => {
+  const person = {}
+  setTimeout(() => {
+    person.name = 'Joe'
+  }, 1000)
+  cy.wrap(person).better('have.property', 'name', 'Joe')
+})
+
 it.skip('shows hard assertions', () => {
   // hard assertion
   // fails the test if it fails
