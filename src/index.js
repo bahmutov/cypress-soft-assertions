@@ -77,6 +77,7 @@ const reHaveLength = /length/
 const $dom = Cypress.dom
 
 const onBeforeLog = (log, command, commandLogId) => {
+  // console.log('onBeforeLog', { log, command, commandLogId })
   log.set('commandLogId', commandLogId)
 
   const previousLogInstance = command
@@ -105,7 +106,7 @@ Cypress.Commands.addAll(
   { type: 'assertion', prevSubject: true },
   {
     better(subject, chainers, ...args) {
-      console.log('better', { subject, chainers, args })
+      // console.log('better', { subject, chainers, args })
 
       // for all code, see Cypress repo driver/src/cy/commands/asserting.ts
 
@@ -116,6 +117,7 @@ Cypress.Commands.addAll(
             .state('upcomingAssertions')
             .indexOf(command.get('currentAssertionCommand'))
         : 0
+      // console.log({ assertionIndex })
       let logIndex = 0
 
       if (_.isFunction(chainers)) {
@@ -136,7 +138,6 @@ Cypress.Commands.addAll(
       const originalChainers = chainers
 
       const throwAndLogErr = (err) => {
-        debugger
         // since we are throwing our own error
         // without going through the assertion we need
         // to ensure our .should command gets logged
@@ -168,14 +169,14 @@ Cypress.Commands.addAll(
         logIndex++
         let chainerLog
         cy.state('onBeforeLog', (log) => {
-          // debugger
+          // console.log('log.name', log.attributes.name, log)
           log.attributes.name = 'better'
           chainerLog = log
           return onBeforeLog(log, command, `${assertionIndex}-${logIndex}`)
         })
 
         cy.state('onAfterLog', (log) => {
-          console.log('onAfterLog')
+          // console.log('onAfterLog')
           // return onBeforeLog(log, command, `${assertionIndex}-${logIndex}`)
         })
 
@@ -194,6 +195,7 @@ Cypress.Commands.addAll(
                 // assertion but its set to retry false then
                 // we need to log out this .should since there
                 // was a problem with the actual assertion syntax
+                // debugger
                 if (err.retry === false) {
                   return throwAndLogErr(err)
                 }
@@ -201,6 +203,7 @@ Cypress.Commands.addAll(
                 // log.attributes.name = 'warn'
                 // throw err
                 if (chainerLog) {
+                  // console.log('chainerLog set to warn', chainerLog)
                   chainerLog.attributes.name = 'warn'
                 }
               }
@@ -251,6 +254,7 @@ Cypress.Commands.addAll(
               throwAndLogErr(err)
             }
 
+            // console.log({ memo, value })
             return applyChainer(memo, value)
           },
           exp,
