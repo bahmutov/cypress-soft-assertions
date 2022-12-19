@@ -111,11 +111,11 @@ Cypress.Commands.addAll(
       // for all code, see Cypress repo driver/src/cy/commands/asserting.ts
 
       const command = cy.state('current')
+      const currentAssertionCommand = command.get('currentAssertionCommand')
+      // console.log({ command, currentAssertionCommand })
 
       const assertionIndex = cy.state('upcomingAssertions')
-        ? cy
-            .state('upcomingAssertions')
-            .indexOf(command.get('currentAssertionCommand'))
+        ? cy.state('upcomingAssertions').indexOf(currentAssertionCommand)
         : 0
       // console.log({ assertionIndex })
       let logIndex = 0
