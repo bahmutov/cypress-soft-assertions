@@ -4,6 +4,8 @@
 
 ## WARNING: does not support retries...
 
+## WARNING: works with Cypress v11
+
 ![Soft assertions](./images/soft.png)
 
 ## Small print
