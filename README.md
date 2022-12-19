@@ -8,6 +8,8 @@
 
 ![Soft assertions](./images/soft.png)
 
+- 📝 [Cypress Needs Soft Assertions](https://glebbahmutov.com/blog/cypress-soft-assertions/)
+
 ## Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2022
